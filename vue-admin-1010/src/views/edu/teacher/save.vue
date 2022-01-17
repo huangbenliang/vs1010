@@ -9,7 +9,7 @@
         <el-input-number
           v-model="teacher.sort"
           controls-position="right"
-          min="0"
+          :min="0"
         />
       </el-form-item>
       <el-form-item label="讲师头衔">
@@ -57,26 +57,62 @@ export default {
       saveBtnDisabled: false, //保存按钮是否禁用
     };
   },
-  created() {},
+  created() {
+      this.init()
+  },
+  watch:{
+      $route(to,from){
+          this.init()
+      }
+  },
   methods: {
+    init() {
+      if (this.$route.params && this.$route.params.id) {
+        const id = this.$route.params.id;
+        //console.log(id)
+        this.getInfo(id);
+      } else {
+        this.teacher = {};
+      }
+    },
+    //获得讲师信息
+    getInfo(id) {
+      teacherApi.getTeacherInfo(id).then((response) => {
+        this.teacher = response.data.item;
+      });
+    },
     saveOrUpdate() {
-      this.saveBtnDisabled = true;
-      this.saveData();
+      //this.saveBtnDisabled = true;
+      if (!this.teacher.id) {
+        this.saveData();
+      } else {
+        this.updateTeacher();
+      }
     },
     // 保存
     saveData() {
-        teacherApi.addTeacher(this.teacher)
-        .then(response=>{ //添加成功
-            //提示信息
-            this.$message({
-                type:'success',
-                message:'添加成功!'
-            });
-            //回到列表页面 路由跳转
-            this.$router.push({path:'/teacher/table'})
+      teacherApi.addTeacher(this.teacher).then((response) => {
+        //添加成功
+        //提示信息
+        this.$message({
+          type: "success",
+          message: "添加成功!",
+        });
+        //回到列表页面 路由跳转
+        this.$router.push({ path: "/teacher/table" });
+      });
+    },
 
-
-        })
+    updateTeacher() {
+      teacherApi.updateTeacher(this.teacher).then((resp) => {
+        //提示信息
+        this.$message({
+          type: "success",
+          message: "修改成功!",
+        });
+        //回到列表页面 路由跳转
+        this.$router.push({ path: "/teacher/table" });
+      });
     },
   },
 };
