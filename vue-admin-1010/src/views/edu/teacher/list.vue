@@ -2,6 +2,50 @@
   <div class="app-container">
     讲师列表
 
+    <!--多条件查询表单-->
+    <el-form
+      :inline="true"
+      class="demo-form-inline"
+      style="margin-left: 20px; margin-top: 12px"
+    >
+      <el-form-item label="名称">
+        <el-input
+          v-model="teacherQuery.name"
+          placeholder="请输入名称"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="级别">
+        <el-select v-model="teacherQuery.level" placeholder="讲师头衔">
+          <el-option label="高级讲师" :value="1"></el-option>
+          <el-option label="首席讲师" :value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="添加时间">
+        <el-time-picker
+          placeholder="选择开始时间"
+          v-model="teacherQuery.begin"
+          format="yyyy-MM-dd HH:mm:ss"
+          default-time="00:00:00"
+          type="datetime"
+        ></el-time-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-time-picker
+          placeholder="选择截止时间"
+          v-model="teacherQuery.end"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          default-time="00:00:00"
+          type="datetime"
+        ></el-time-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="getList()"
+          >查询</el-button
+        >
+        <el-button type="default" @click="resetData()">清空</el-button>
+      </el-form-item>
+    </el-form>
+
     <!-- 表格显示 -->
     <el-table
       :data="list"
@@ -76,8 +120,8 @@ export default {
   },
   methods: {
     //创建具体的方法,调用teacher.js定义的方法
-    getList(page=1) {
-        this.page=page  //调用时,如果不传page 默认第一页,如果传了,则赋值给this.page
+    getList(page = 1) {
+      this.page = page //调用时,如果不传page 默认第一页,如果传了,则赋值给this.page
       teacher
         .getTeacherListPage(this.page, this.limit, this.teacherQuery)
         .then((resp) => {
@@ -88,6 +132,14 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+
+    //清空方法
+    resetData() {
+      //表单输入项数据清空
+      this.teacherQuery = {};
+      //查询所有讲师数据
+      this.getList();
     },
   },
 };
