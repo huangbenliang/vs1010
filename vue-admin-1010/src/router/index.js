@@ -42,19 +42,19 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/teacher/table',
     name: '讲师管理',
-    meta: { title: 'Example', icon: 'example' },
+    meta: { title: '讲师管理', icon: 'example' },
     children: [
       {
         path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        name: '讲师列表',
+        component: () => import('@/views/edu/teacher/list'),
+        meta: { title: '讲师列表', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'save',
+        name: '添加讲师',
+        component: () => import('@/views/edu/teacher/save'),
+        meta: { title: '添加讲师', icon: 'tree' }
       }
     ]
   },
