@@ -21,22 +21,22 @@
         </el-select>
       </el-form-item>
       <el-form-item label="添加时间">
-        <el-time-picker
+        <el-date-picker
           placeholder="选择开始时间"
           v-model="teacherQuery.begin"
           format="yyyy-MM-dd HH:mm:ss"
           default-time="00:00:00"
           type="datetime"
-        ></el-time-picker>
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-time-picker
+        <el-date-picker
           placeholder="选择截止时间"
           v-model="teacherQuery.end"
           value-format="yyyy-MM-dd HH:mm:ss"
           default-time="00:00:00"
           type="datetime"
-        ></el-time-picker>
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="getList()"
@@ -80,7 +80,7 @@
             type="danger"
             size="mini"
             icon="el-icon-delete"
-            @click="removeDataById(scope.row.id)"
+            @click="removeDataById(scope.row.id,scope.row.name)"
             >删除</el-button
           >
         </template>
@@ -121,7 +121,7 @@ export default {
   methods: {
     //创建具体的方法,调用teacher.js定义的方法
     getList(page = 1) {
-      this.page = page //调用时,如果不传page 默认第一页,如果传了,则赋值给this.page
+      this.page = page; //调用时,如果不传page 默认第一页,如果传了,则赋值给this.page
       teacher
         .getTeacherListPage(this.page, this.limit, this.teacherQuery)
         .then((resp) => {
@@ -141,6 +141,25 @@ export default {
       //查询所有讲师数据
       this.getList();
     },
-  },
+
+    //删除讲师
+    removeDataById(id,name) {
+      //提示信息
+      this.$confirm("此操作将永久删除该讲师记录["+name+"], 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        teacher.deleteTeacherById(id).then((response) => {
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+          //重新打开列表
+          this.getList();
+        });
+      });
+    },
+  }, //export
 };
 </script>
